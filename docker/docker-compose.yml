@@ -1,15 +1,15 @@
 version: '3'
 services:
   opensearch-node1:
-    image: gsingers/opensearch-learning-to-rank:2.1.0
+    image: local-opensearch-learning-to-rank:latest
     container_name: opensearch-node1
     environment:
       - discovery.type=single-node
       - http.max_content_length=1000mb
       - "OPENSEARCH_JAVA_OPTS=-Xms4G -Xmx4G"
-
+      - DISABLE_SECURITY_PLUGIN=true
     volumes:
-      - opensearch-data1:/usr/share/opensearch/data  #todo: figure this out so we can have persistent storage
+      - opensearch-machine-learning-data:/usr/share/opensearch/data
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
@@ -17,13 +17,13 @@ services:
       - opensearch-net
   
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.5.0
+    image: local-opensearch-dashboard-disabled-security:latest
     ports:
       - 5601:5601
     expose:
       - "5601"
     environment:
-      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200"]'
+      OPENSEARCH_HOSTS: '["http://opensearch-node1:9200"]'
     depends_on:
       - opensearch-node1
     networks:
@@ -31,7 +31,7 @@ services:
 
 
 volumes:
-  opensearch-data1:
+  opensearch-machine-learning-data:
 
 networks:
   opensearch-net:

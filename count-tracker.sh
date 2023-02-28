@@ -2,8 +2,8 @@
 while [ true ];
 do
   echo "Queries:"
-  curl -k -XGET -u admin:admin  "https://localhost:9200/_cat/count/bbuy_queries";
+  curl -k -XGET "http://localhost:9200/_cat/count/bbuy_queries";
   echo "Products:"
-  curl -k -XGET -u admin:admin  "https://localhost:9200/_cat/count/bbuy_products";
+  curl -k -XGET "http://localhost:9200/_cat/count/bbuy_products";
   sleep 60;
 done

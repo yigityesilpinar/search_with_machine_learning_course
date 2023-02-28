@@ -8,7 +8,7 @@ pandas
 numpy
 numba
 numexpr
-sklearn
+scikit-learn
 graphviz
 matplotlib
 fasttext

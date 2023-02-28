@@ -9,10 +9,10 @@ import csv
 import nltk
 stemmer = nltk.stem.PorterStemmer()
 
-categories_file_name = r'/workspace/datasets/product_data/categories/categories_0001_abcat0010000_to_pcmcat99300050000.xml'
+categories_file_name = r'datasets/product_data/categories/categories_0001_abcat0010000_to_pcmcat99300050000.xml'
 
-queries_file_name = r'/workspace/datasets/train.csv'
-output_file_name = r'/workspace/datasets/fasttext/labeled_queries.txt'
+queries_file_name = r'datasets/train.csv'
+output_file_name = r'datasets/fasttext/labeled_queries.txt'
 
 parser = argparse.ArgumentParser(description='Process arguments.')
 general = parser.add_argument_group("general")

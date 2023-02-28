@@ -160,18 +160,11 @@ if __name__ == "__main__":
         password = getpass()
         auth = (args.user, password)
 
-    base_url = "https://{}:{}/".format(host, port)
+    base_url = "http://{}:{}/".format(host, port)
     opensearch = OpenSearch(
         hosts=[{'host': host, 'port': port}],
         http_compress=True,  # enables gzip compression for request bodies
-        http_auth=auth,
-        # client_cert = client_cert_path,
-        # client_key = client_key_path,
-        use_ssl=True,
-        verify_certs=False,  # set to true if you have certs
-        ssl_assert_hostname=False,
-        ssl_show_warn=False,
-
+        use_ssl=False,
     )
     output_dir = args.output_dir
     if os.path.isdir(output_dir) == False:
