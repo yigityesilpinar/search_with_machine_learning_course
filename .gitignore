@@ -139,3 +139,5 @@ dmypy.json
 # Local setup
 datasets/
 logs/
+ltr_output/
+.DS_Store
