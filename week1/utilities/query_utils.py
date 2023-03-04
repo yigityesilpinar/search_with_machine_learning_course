@@ -33,8 +33,9 @@ def create_prior_queries(doc_ids, doc_id_weights, query_times_seen): # total imp
         for idx, doc in enumerate(doc_ids):
             try:
                 wgt = doc_id_weights[doc]  # This should be the number of clicks or whatever
-                seen = max(wgt / query_times_seen, 0.001)
-                click_prior_query += "%s^%.3f  " % (doc, seen)
+                seen = wgt / query_times_seen
+                if seen > 0.001:
+                    click_prior_query += "%s^%.3f  " % (doc, seen)
             except KeyError as ke:
                 pass # nothing to do in this case, it just means we can't find priors for this doc
     return click_prior_query
