@@ -10,33 +10,33 @@ ltr-2.0.0-os2.2.1
 `./ltr-end-to-end.sh -y -m 0 -c quantiles`
 
 ```
-Simple MRR is 0.319
-LTR Simple MRR is 0.484
-Hand tuned MRR is 0.408
+Simple MRR is 0.279
+LTR Simple MRR is 0.441
+Hand tuned MRR is 0.423
 LTR Hand Tuned MRR is 0.462
 
-Simple p@10 is 0.119
-LTR simple p@10 is 0.151
-Hand tuned p@10 is 0.152
-LTR hand tuned p@10 is 0.160
-Simple better: 461      LTR_Simple Better: 582  Equal: 20
-HT better: 556  LTR_HT Better: 644      Equal: 22
+Simple p@10 is 0.121
+LTR simple p@10 is 0.168
+Hand tuned p@10 is 0.171
+LTR hand tuned p@10 is 0.193
+Simple better: 454      LTR_Simple Better: 647  Equal: 17
+HT better: 559  LTR_HT Better: 709      Equal: 20
 ```
 
 `After click prior feature`
 
 ```
-Simple MRR is 0.319
-LTR Simple MRR is 0.681
-Hand tuned MRR is 0.408
+Simple MRR is 0.279
+LTR Simple MRR is 0.621
+Hand tuned MRR is 0.423
 LTR Hand Tuned MRR is 0.718
 
-Simple p@10 is 0.119
-LTR simple p@10 is 0.270
-Hand tuned p@10 is 0.152
-LTR hand tuned p@10 is 0.294
-Simple better: 397 LTR_Simple Better: 647 Equal: 19
-HT better: 578 LTR_HT Better: 619 Equal: 25
+Simple p@10 is 0.121
+LTR simple p@10 is 0.309
+Hand tuned p@10 is 0.171
+LTR hand tuned p@10 is 0.362
+Simple better: 478      LTR_Simple Better: 624  Equal: 16
+HT better: 568  LTR_HT Better: 695      Equal: 25
 ```
 
 ## Comments for performance evaluation

@@ -72,7 +72,7 @@
         "-f",
         "week1/conf/ltr_featureset.json",
         "--click_model",
-        "heuristic"
+        "quantiles"
       ]
     },
     {
@@ -130,7 +130,7 @@
         "--xgb_test_num_queries",
         "100",
         "--xgb_main_query",
-        "1",
+        "0",
         "--xgb_rescore_query_weight",
         "2"
       ]
