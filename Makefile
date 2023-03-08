@@ -36,3 +36,7 @@ track_index_products:
 .PHONY: track_index_queries
 track_index_queries:
 	tail -f logs/index_queries.log
+
+.PHONY: ltr
+ltr: 
+	./ltr-end-to-end.sh -y

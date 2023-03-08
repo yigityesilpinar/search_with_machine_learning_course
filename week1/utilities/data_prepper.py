@@ -5,7 +5,7 @@ import numpy as np
 from numpy.random import RandomState
 import pandas as pd
 import query_utils as qu
-from opensearchpy import RequestError
+from opensearchpy import RequestError, OpenSearch
 import os
 
 # from importlib import reload
@@ -17,7 +17,7 @@ class DataPrepper:
     train_random_state = RandomState(256)
     test_random_state = RandomState(17)
 
-    def __init__(self, opensearch_client, featureset_name="bbuy_product_featureset", index_name="bbuy_products",
+    def __init__(self, opensearch_client: OpenSearch, featureset_name="bbuy_product_featureset", index_name="bbuy_products",
                  ltr_store_name="week1", train_random_seed=256, test_random_seed=17) -> None:
         self.opensearch = opensearch_client
         self.featureset_name = featureset_name
@@ -236,20 +236,31 @@ class DataPrepper:
                                                 size=len(query_doc_ids), terms_field=terms_field)
         ##### Step Extract LTR Logged Features:
         # IMPLEMENT_START --
-        print("IMPLEMENT ME: __log_ltr_query_features: Extract log features out of the LTR:EXT response and place in a data frame")
+        log_query_response = self.opensearch.search(body=log_query, index=self.index_name)
+        hits = log_query_response['hits']['hits']
+
         # Loop over the hits structure returned by running `log_query` and then extract out the features from the response per query_id and doc id.  Also capture and return all query/doc pairs that didn't return features
         # Your structure should look like the data frame below
         feature_results = {}
         feature_results["doc_id"] = []  # capture the doc id so we can join later
         feature_results["query_id"] = []  # ^^^
         feature_results["sku"] = []
-        feature_results["name_match"] = []
-        rng = np.random.default_rng(12345)
-        for doc_id in query_doc_ids:
-            feature_results["doc_id"].append(doc_id)  # capture the doc id so we can join later
+
+        for hit in hits:
+            hit_id = hit["_id"]
+            feature_results["doc_id"].append(hit_id)  # capture the doc id so we can join later
             feature_results["query_id"].append(query_id)
-            feature_results["sku"].append(doc_id)  
-            feature_results["name_match"].append(rng.random())
+            feature_results["sku"].append(hit_id)  
+            for ltrlog in hit["fields"]["_ltrlog"]:
+                log_entries = ltrlog["log_entry"]
+                for log_entry in log_entries:
+                    # {'name': 'name_match', 'value': 5.2446756}
+                    log_entry_value = log_entry["value"] if "value" in log_entry else 0.0
+                    log_entry_key = log_entry["name"]
+                    if log_entry_key in feature_results:
+                        feature_results[log_entry_key].append(log_entry_value)
+                    else:
+                        feature_results[log_entry_key] = [log_entry_value]
         frame = pd.DataFrame(feature_results)
         return frame.astype({'doc_id': 'int64', 'query_id': 'int64', 'sku': 'int64'})
         # IMPLEMENT_END

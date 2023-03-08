@@ -5,12 +5,144 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Current File",
+      "name": "1) Create ltr store",
       "type": "python",
       "request": "launch",
-      "program": "${file}",
+      "program": "week1/utilities/build_ltr.py",
       "console": "integratedTerminal",
-      "justMyCode": true
+      "justMyCode": true,
+      "args": ["--create_ltr_store"]
+    },
+    {
+      "name": "2) Upload ltr featureset",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["-f", "week1/conf/ltr_featureset.json", "--upload_featureset"]
+    },
+    {
+      "name": "3) Split training and test sets from impressions",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--output_dir",
+        "ltr_output",
+        "--split_input",
+        "datasets/train.csv",
+        "--split_train_rows",
+        "1000000",
+        "--split_test_rows",
+        "1000000"
+      ]
+    },
+    {
+      "name": "4) Create impression data set",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--generate_impressions",
+        "--output_dir",
+        "ltr_output",
+        "--train_file",
+        "ltr_output/train.csv",
+        "--synthesize"
+      ]
+    },
+    {
+      "name": "5) Create training set from the impressions set",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--ltr_terms_field",
+        "sku",
+        "--output_dir",
+        "ltr_output",
+        "--create_xgb_training",
+        "-f",
+        "week1/conf/ltr_featureset.json",
+        "--click_model",
+        "quantiles"
+      ]
+    },
+    {
+      "name": "6) Train an XGB model",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--output_dir",
+        "ltr_output/",
+        "-x",
+        "ltr_output/training.xgb",
+        "--xgb_conf",
+        "week1/conf/xgb-conf.json"
+      ]
+    },
+    {
+      "name": "7) Upload model to ltr",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--upload_ltr_model",
+        "--xgb_model",
+        "ltr_output/xgb_model.model"
+      ]
+    },
+    {
+      "name": "8) Visualise model",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["--xgb_plot", "--output_dir", "ltr_output"]
+    },
+    {
+      "name": "9) Run test queries",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--xgb_test",
+        "ltr_output/test.csv",
+        "--train_file",
+        "ltr_output/train.csv",
+        "--output_dir",
+        "ltr_output",
+        "--xgb_test_num_queries",
+        "100",
+        "--xgb_main_query",
+        "0",
+        "--xgb_rescore_query_weight",
+        "2"
+      ]
+    },
+    {
+      "name": "10) Analyze the results",
+      "type": "python",
+      "request": "launch",
+      "program": "week1/utilities/build_ltr.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["--analyze", "--output_dir", "ltr_output"]
     }
   ]
 }
