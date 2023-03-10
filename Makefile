@@ -75,3 +75,21 @@ predict:
 .PHONY: run
 run: generate shuffle normalize split train test_model
 
+.PHONY: generate_synonyms_data
+generate_synonyms_data:
+	python `pwd`/week2/createContentTrainingData.py --label name --min_products 500 --output `pwd`/datasets/fasttext/products.txt
+
+.PHONY: normalize_synonyms_data
+normalize_synonyms_data: 
+	cat `pwd`/datasets/fasttext/products.txt |  cut -c 10- | sed -e "s/\([.\!?,'/()]\)/ \1 /g" | tr "[:upper:]" "[:lower:]" | sed "s/[^[:alnum:]]/ /g" | tr -s ' ' > `pwd`/datasets/fasttext/normalized_products.txt
+
+.PHONY: train_synonyms
+train_synonyms: 
+	fasttext skipgram -input `pwd`/datasets/fasttext/normalized_products.txt -output `pwd`/datasets/fasttext/title_model -minCount 10 -epoch 25
+
+.PHONY: predict_synonyms
+predict_synonyms: 
+	fasttext nn `pwd`/datasets/fasttext/title_model.bin
+
+.PHONY: run_synonyms
+run_synonyms: generate_synonyms_data normalize_synonyms_data train_synonyms
