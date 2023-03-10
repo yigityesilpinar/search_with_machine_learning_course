@@ -31,6 +31,17 @@ output_dir = path.parent
 if os.path.isdir(output_dir) == False:
         os.mkdir(output_dir)
 
+ROOT_DIR = os.path.dirname(os.path.abspath("__file__"))
+CATEGORIES_FILE_PATH = os.path.join(ROOT_DIR, 'datasets/product_data/categories/categories_0001_abcat0010000_to_pcmcat99300050000.xml')
+tree = ET.parse(CATEGORIES_FILE_PATH)
+root = tree.getroot()
+
+category_to_parents = {}
+for child in root:
+    catPath = child.find('path')
+    idArray = [cat.find('id').text for cat in catPath]
+    category_to_parents[idArray[-1]] = idArray[:-1]
+
 if args.input:
     directory = args.input
 # IMPLEMENT: Track the number of items in each category and only output if above the min
@@ -38,6 +49,15 @@ min_products = args.min_products
 names_as_labels = False
 if args.label == 'name':
     names_as_labels = True
+
+
+def get_replacement_parent_category(category, unique_categories_with_min_products):
+    if category in category_to_parents:
+        parent_categories = category_to_parents[category]
+        for nearest_parent in reversed(parent_categories):
+            if nearest_parent in unique_categories_with_min_products:
+                return nearest_parent
+    return None
 
 def _label_filename(filename):
     tree = ET.parse(filename)
@@ -71,8 +91,11 @@ if __name__ == '__main__':
                 all_rows.extend(label_list)
             df = pd.DataFrame(all_rows, columns=["Category", "Name"])
             if min_products:
-                df = df[
+                df_valid_category = df[
                     df.groupby("Category")["Category"].transform("size") >= min_products
                 ]
+                unique_categories_with_min_products = list(set(df_valid_category.groupby("Category")["Category"].transform(lambda x: x)))
+                df["Category"] = df.groupby("Category")["Category"].transform(lambda x: x if (x.count() >= min_products) else get_replacement_parent_category(x.values[0], unique_categories_with_min_products))
+                df = df[df["Category"].map(pd.notnull)]
             df["Category"] = df["Category"].map("__label__{}".format)
             np.savetxt(output_file, df.values, fmt="%s")
