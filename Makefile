@@ -108,3 +108,37 @@ copy_synonyms_to_container:
 .PHONY: shell
 shell:
 	@docker-compose -f docker/docker-compose.yml  exec opensearch-node1 /bin/bash
+
+.PHONY: generate_reviews_data
+generate_reviews_data:
+	python week2/createReviewLabels.py
+
+.PHONY: shuffle_reviews_data
+shuffle_reviews_data: 
+	bash -c "shuf datasets/fasttext/output_reviews.fasttext  --random-source=<(seq 99999) > datasets/fasttext/shuffled_output_reviews.fasttext"
+
+.PHONY: normalize_reviews_data
+normalize_reviews_data: 
+	cat `pwd`/datasets/fasttext/shuffled_output_reviews.fasttext |sed -e "s/\([.\!?,'/()]\)/ \1 /g" | tr "[:upper:]" "[:lower:]" | sed "s/[^[:alnum:]_]/ /g" | tr -s ' ' > `pwd`/datasets/fasttext/normalized_output_reviews.fasttext
+
+.PHONY: split_reviews_data
+split_reviews_data: 
+	head -10000 `pwd`/datasets/fasttext/normalized_output_reviews.fasttext > `pwd`/datasets/fasttext/reviews_training_data.txt && \
+	tail -10000 `pwd`/datasets/fasttext/normalized_output_reviews.fasttext > `pwd`/datasets/fasttext/reviews_test_data.txt
+	wc `pwd`/datasets/fasttext/reviews_test_data.txt
+	wc `pwd`/datasets/fasttext/reviews_training_data.txt
+
+.PHONY: train_reviews
+train_reviews: 
+	fasttext supervised -input `pwd`/datasets/fasttext/reviews_training_data.txt -output `pwd`/datasets/fasttext/reviews_model -lr 1.0 -epoch 25 -wordNgrams 2
+
+.PHONY: test_reviews_model
+test_reviews_model: 
+	fasttext test `pwd`/datasets/fasttext/reviews_model.bin `pwd`/datasets/fasttext/reviews_test_data.txt
+
+.PHONY: predict_reviews
+predict_reviews: 
+	fasttext predict `pwd`/datasets/fasttext/reviews_model.bin -
+
+.PHONY: run_reviews
+run_reviews: generate_reviews_data shuffle_reviews_data normalize_reviews_data split_reviews_data train_reviews test_reviews_model
