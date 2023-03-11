@@ -7,10 +7,10 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from nltk import word_tokenize, pos_tag
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 
-def transform_name(product_name):
-    # IMPLEMENT
-    return product_name
 
 # Directory for product data
 directory = r'datasets/product_data/products/'
@@ -20,11 +20,29 @@ general = parser.add_argument_group("general")
 general.add_argument("--input", default=directory,  help="The directory containing product data")
 general.add_argument("--output", default="datasets/fasttext/output.fasttext", help="the file to output to")
 general.add_argument("--label", default="id", help="id is default and needed for downsteam use, but name is helpful for debugging")
+general.add_argument("--transform", default=False, help="if set, do transformations on product name using nltk", action="store_true" )
 
 # IMPLEMENT: Setting min_products removes infrequent categories and makes the classifier's task easier.
 general.add_argument("--min_products", default=0, type=int, help="The minimum number of products per category (default is 0).")
 
 args = parser.parse_args()
+
+def transform_name(product_name):
+    if args.transform:
+        tokens = word_tokenize(product_name.lower())
+        english_stopwords = stopwords.words("english")
+        tokens_without_stopwords = [token for token in tokens if not token in english_stopwords]
+        pos_tags = pos_tag(tokens_without_stopwords)
+        # https://stackoverflow.com/questions/15388831/what-are-all-possible-pos-tags-of-nltk
+        target_tag_types = ["DT", "EX", "FW", "IN","JJ","JJR", "JJS","NN", "NNP", "NNPS", "NNS", "PDT", "RB", "RBR", "RBS", "RP", "SYM", "UH", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ"]
+        tokens_filtered_by_tag_type = [tag[0] for tag in pos_tags if tag[1] in target_tag_types]
+        stemmer = PorterStemmer()
+        stemmed_tokens = [stemmer.stem(token) for token in tokens_filtered_by_tag_type]
+        transformed_product_name = " ".join(stemmed_tokens)
+        return transformed_product_name
+    # IMPLEMENT
+    return product_name
+
 output_file = args.output
 path = Path(output_file)
 output_dir = path.parent
@@ -77,7 +95,10 @@ def _label_filename(filename):
                   cat = child.find('categoryPath')[len(child.find('categoryPath')) - 1][0].text
               # Replace newline chars with spaces so fastText doesn't complain
               name = child.find('name').text.replace('\n', ' ')
-              labels.append((cat, transform_name(name)))
+              if names_as_labels:
+                  labels.append((transform_name(cat), transform_name(name)))
+              else: 
+                  labels.append((cat, transform_name(name)))
     return labels
 
 if __name__ == '__main__':
@@ -97,5 +118,6 @@ if __name__ == '__main__':
                 unique_categories_with_min_products = list(set(df_valid_category.groupby("Category")["Category"].transform(lambda x: x)))
                 df["Category"] = df.groupby("Category")["Category"].transform(lambda x: x if (x.count() >= min_products) else get_replacement_parent_category(x.values[0], unique_categories_with_min_products))
                 df = df[df["Category"].map(pd.notnull)]
-            df["Category"] = df["Category"].map("__label__{}".format)
+            if not names_as_labels:
+                df["Category"] = df["Category"].map("__label__{}".format)
             np.savetxt(output_file, df.values, fmt="%s")

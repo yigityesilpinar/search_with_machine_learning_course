@@ -10,6 +10,7 @@ services:
       - DISABLE_SECURITY_PLUGIN=true
     volumes:
       - opensearch-machine-learning-data:/usr/share/opensearch/data
+      - ${PWD}/datasets/fasttext/synonyms.csv:/usr/share/opensearch/config/synonyms.csv
     ports:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer

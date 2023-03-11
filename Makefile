@@ -1,4 +1,3 @@
-
 .DEFAULT_GOAL := start
 
 .PHONY: start
@@ -77,19 +76,35 @@ run: generate shuffle normalize split train test_model
 
 .PHONY: generate_synonyms_data
 generate_synonyms_data:
-	python `pwd`/week2/createContentTrainingData.py --label name --min_products 500 --output `pwd`/datasets/fasttext/products.txt
+	python `pwd`/week2/createContentTrainingData.py --label name --transform --output `pwd`/datasets/fasttext/products.txt
 
 .PHONY: normalize_synonyms_data
 normalize_synonyms_data: 
-	cat `pwd`/datasets/fasttext/products.txt |  cut -c 10- | sed -e "s/\([.\!?,'/()]\)/ \1 /g" | tr "[:upper:]" "[:lower:]" | sed "s/[^[:alnum:]]/ /g" | tr -s ' ' > `pwd`/datasets/fasttext/normalized_products.txt
+	cat `pwd`/datasets/fasttext/products.txt | sed -e "s/\([.\!?,'/()]\)/ \1 /g" | tr "[:upper:]" "[:lower:]" | sed "s/[^[:alnum:]]/ /g" | tr -s ' ' > `pwd`/datasets/fasttext/normalized_products.txt
 
 .PHONY: train_synonyms
 train_synonyms: 
-	fasttext skipgram -input `pwd`/datasets/fasttext/normalized_products.txt -output `pwd`/datasets/fasttext/title_model -minCount 10 -epoch 25
+	fasttext skipgram -input `pwd`/datasets/fasttext/normalized_products.txt -output `pwd`/datasets/fasttext/title_model -minCount 7 -epoch 25
 
 .PHONY: predict_synonyms
 predict_synonyms: 
 	fasttext nn `pwd`/datasets/fasttext/title_model.bin
 
+.PHONY: top_words
+top_words: 
+	cat `pwd`/datasets/fasttext/normalized_products.txt | tr " " "\n" | grep "...." | sort | uniq -c | sort -nr | head -1000 | grep -oE '[^ ]+$'' > `pwd`/datasets/fasttext/top_words.txt
+
+.PHONY: top_words_synonyms
+top_words_synonyms: 
+	python `pwd`/week2/generateSynonyms.py
+
 .PHONY: run_synonyms
-run_synonyms: generate_synonyms_data normalize_synonyms_data train_synonyms
+run_synonyms: generate_synonyms_data normalize_synonyms_data train_synonyms top_words top_words_synonyms
+
+.PHONY: copy_synonyms_to_container
+copy_synonyms_to_container: 
+	docker cp `pwd`/datasets/fasttext/synonyms.csv opensearch-node1:/usr/share/opensearch/config/synonyms.csv
+
+.PHONY: shell
+shell:
+	@docker-compose -f docker/docker-compose.yml  exec opensearch-node1 /bin/bash
