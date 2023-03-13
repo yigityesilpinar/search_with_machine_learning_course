@@ -1,0 +1,399 @@
+[
+  {
+    "took": 40,
+    "timed_out": false,
+    "_shards": {
+      "total": 1,
+      "successful": 1,
+      "skipped": 0,
+      "failed": 0
+    },
+    "hits": {
+      "total": {
+        "value": 5852,
+        "relation": "eq"
+      },
+      "max_score": 843.13885,
+      "hits": [
+        {
+          "_index": "bbuy_products",
+          "_id": "9084206",
+          "_score": 843.13885,
+          "_source": {
+            "name": [
+              "Apple\u00ae - Earbuds for Select Apple\u00ae iPod\u00ae Models"
+            ],
+            "shortDescription": [
+              "Compatible with 4th-generation iPod nano, 120GB iPod classic and 2nd-generation iPod touch; remote for controlling music and video playback; microphone for recording voice memos"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "2197043",
+          "_score": 146.2772,
+          "_source": {
+            "name": ["Sony - Earbud Headphones - Black"],
+            "shortDescription": [
+              "13.5mm drivers; neodymium magnet; 3 sets of silicone ear cushions"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "9251098",
+          "_score": 141.56953,
+          "_source": {
+            "name": [
+              "Skullcandy - Ink'd Stereo Ear Bud Headphones - Black/Chrome"
+            ],
+            "shortDescription": [
+              "Ear bud design; silicone ear gels; noise reduction"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3100277",
+          "_score": 141.23859,
+          "_source": {
+            "name": ["Rocketfish\u2122 - Stereo Earbud Headphones"],
+            "shortDescription": [
+              "10mm drivers; neodymium magnets; lightweight design"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "8605459",
+          "_score": 140.37383,
+          "_source": {
+            "name": ["JVC - Gumy Stereo Earbud Headphones - Olive Black"],
+            "shortDescription": [
+              "Compatible with most portable audio devices; 3-1/3' cord; gold-plated stereo mini jack"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3316072",
+          "_score": 139.03253,
+          "_source": {
+            "name": ["JVC - JVC Sport Clip Earbud Headphones - Black"],
+            "shortDescription": [
+              "JVC Sport Clip Earbud Headphones: Rubber ear hooks; water-resistant design; sound isolating; 11mm drivers; neodymium magnets"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "8605253",
+          "_score": 135.33597,
+          "_source": {
+            "name": ["JVC - Gumy Stereo Earbud Headphones - Coconut White"],
+            "shortDescription": [
+              "From our expanded online assortment; compatible with most portable audio devices; 3-1/3' cord; gold-plated stereo mini jack"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "2204196",
+          "_score": 134.36525,
+          "_source": {
+            "name": ["Sony - Over-The-Ear Headphones - Black"],
+            "shortDescription": [
+              "30mm multilayer dome diaphragm; high-energy neodymium driver; urethane-cushioned ear pads"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "2197089",
+          "_score": 132.07745,
+          "_source": {
+            "name": ["Sony - Earbud Headphones - White"],
+            "shortDescription": [
+              "13.5mm drivers; neodymium magnet; 3 sets of silicone ear cushions"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "1232474",
+          "_score": 130.18471,
+          "_source": {
+            "name": ["Beats By Dr. Dre - Beats iBeats Earbud Headphones"],
+            "shortDescription": [
+              "3-button microphone; noise-canceling design; Duraflex protective jacket"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "took": 28,
+    "timed_out": false,
+    "_shards": {
+      "total": 1,
+      "successful": 1,
+      "skipped": 0,
+      "failed": 0
+    },
+    "hits": {
+      "total": {
+        "value": 265,
+        "relation": "eq"
+      },
+      "max_score": 4.3011093,
+      "hits": [
+        {
+          "_index": "bbuy_products",
+          "_id": "2473053",
+          "_score": 4.3011093,
+          "_source": {
+            "name": ["Dynex\u2122 - Espresso Basic Stand for TVs Up to 32\""],
+            "shortDescription": [
+              "Accommodates up to 3 full-size components; additional storage for game consoles; 1 adjustable shelf; particle board; slide-on moldings; wire management"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3990516",
+          "_score": 0.074202724,
+          "_source": {
+            "name": ["Nespresso - Essenza Espresso Maker - Black"],
+            "shortDescription": [
+              "Makes espresso and lungo; 19-bar high-pressure pump; Thermobloc heating element; Compact Brewing Unit technology; 30-oz. removable water tank; manual volume control; backlit coffee buttons; 1260 watts of power"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "1720059",
+          "_score": 0.074202724,
+          "_source": {
+            "name": ["Nespresso - Essenza Espresso Maker - Black"],
+            "shortDescription": [
+              "Automatic and programmable; compact brewing unit technology; included Aeroccino milk frother; backlit on/off and coffee volume buttons"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3990589",
+          "_score": 0.0707395,
+          "_source": {
+            "name": ["Nespresso - CitiZ Espresso Maker - Black"],
+            "shortDescription": [
+              "Makes espresso and lungo; 19-bar high-pressure pump; automatic volume control; thermo block heating element; auto power-off after 9 minutes; folding drip tray; removable 34-oz. water tank; adaptable grid"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3990831",
+          "_score": 0.0707395,
+          "_source": {
+            "name": ["Nespresso - CitiZ Espresso Maker - Red"],
+            "shortDescription": [
+              "Makes espresso and lungo; 19-bar high-pressure pump; automatic volume control; thermo block heating element; auto power-off after 9 minutes; folding drip tray; removable 34-oz. water tank; adaptable grid"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3990534",
+          "_score": 0.07073936,
+          "_source": {
+            "name": ["Nespresso - Pixie Espresso Maker - Electric Aluminum"],
+            "shortDescription": [
+              "Thermoblock heating element; 19-bar high-pressure pump; automatic volume control; folding drip tray; cable storage"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3990561",
+          "_score": 0.07073936,
+          "_source": {
+            "name": ["Nespresso - Pixie Espresso Maker - Electric Titan"],
+            "shortDescription": [
+              "Thermoblock heating element; 19-bar high-pressure pump; folding drip tray; cable storage; capsule container"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "2588376",
+          "_score": 0.07073936,
+          "_source": {
+            "name": ["Nespresso - Essenza Espresso Maker - Titan Gray"],
+            "shortDescription": [
+              "Automatic and programmable; compact unit brewing technology; included Aeroccino milk frother; backlit on/off and coffee volume buttons"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "3991039",
+          "_score": 0.06758291,
+          "_source": {
+            "name": ["Nespresso - CitiZ & Milk Coffeemaker - Silver Chrome"],
+            "shortDescription": [
+              "Thermoblock heating element; froths hot or cold milk; 19-bar high-pressure pump; folding drip tray; cable storage"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "9373288",
+          "_score": 0.011805496,
+          "_source": {
+            "name": ["Bialetti - Moka Espresso Coffeemaker"],
+            "shortDescription": [
+              "Makes up to nine 2-oz. cups; durable aluminum material; unique octagon shape"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "took": 45,
+    "timed_out": false,
+    "_shards": {
+      "total": 1,
+      "successful": 1,
+      "skipped": 0,
+      "failed": 0
+    },
+    "hits": {
+      "total": {
+        "value": 7359,
+        "relation": "eq"
+      },
+      "max_score": 439.58023,
+      "hits": [
+        {
+          "_index": "bbuy_products",
+          "_id": "1980124",
+          "_score": 439.58023,
+          "_source": {
+            "name": [
+              "Canon - EOS Rebel T3i 18.0-Megapixel DSLR Camera with 18-55mm Lens - Black"
+            ],
+            "shortDescription": [
+              "Vari-angle 3.0-inch Clear View LCD screen1080 full HD video3.7 FPS (frames per second)ISO 100-6400 (expandable to 12800)"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "1989073",
+          "_score": 370.2124,
+          "_source": {
+            "name": [
+              "Nikon - D5100 16.2-Megapixel DSLR Camera with 18-55mm VR Lens - Black"
+            ],
+            "shortDescription": [
+              "High Resolution 16.2 MP DX-format CMOS sensor3\" Super-Density Vari-Angle LCD Monitor1080 full HD videoISO sensitivity 100-6400 (expandable to ISO 25,600 equivalent)"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "6813362",
+          "_score": 193.7192,
+          "_source": {
+            "name": ["Canon - DSLR Gadget Bag - Black"],
+            "shortDescription": [
+              "Convenient storage for Canon EOS DSLR cameras"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "8297737",
+          "_score": 143.64357,
+          "_source": {
+            "name": ["Kodak - EasyShare 7.1-Megapixel Digital Camera - Black"],
+            "shortDescription": [
+              "12x optical/4.2x digital/50x total zoom; 2.5\" color TFT-LCD; direct-print capability; Kodak Color Science chip; burst shooting mode"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "8510961",
+          "_score": 115.59131,
+          "_source": {
+            "name": ["HP - Photosmart 7.2MP Digital Camera - White"],
+            "shortDescription": [
+              "3x optical/3x digital zoom; 2.4\" indoor/outdoor color LCD; HP Steady Photo shake reduction technology; 3 still-image quality modes; 9 picture modes; PictBridge-enabled"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "9924603",
+          "_score": 115.41877,
+          "_source": {
+            "name": ["Apple\u00ae - iPad\u2122 Digital Camera Connection Kit"],
+            "shortDescription": [
+              "Compatible with most digital cameras and Apple iPhone\u00ae; media reader; USB interface"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "1034553",
+          "_score": 107.97455,
+          "_source": {
+            "name": ["Rocketfish\u2122 - 58mm UV Filter"],
+            "shortDescription": [
+              "Compatible with most digital cameras with a 58mm lens; high-quality optical glass; improves image clarity"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "2053606",
+          "_score": 107.22141,
+          "_source": {
+            "name": ["Lowepro - Tahoe 30 Digital Camera Bag - Black"],
+            "shortDescription": [
+              "Compatible with most compact point-and-shoot digital cameras, select compact camcorders, MP3 players and mobile phones; velocity nylon construction; soft, brushed tricot lining; zippered front pocket"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "8510952",
+          "_score": 103.58807,
+          "_source": {
+            "name": ["Kodak - EasyShare 5.0MP Digital Camera - Pink"],
+            "shortDescription": [
+              "Best Buy Exclusive; 3x optical/5x digital zoom; 2.4\" color LCD; compact body; direct-print capability"
+            ]
+          }
+        },
+        {
+          "_index": "bbuy_products",
+          "_id": "4858397",
+          "_score": 103.51763,
+          "_source": {
+            "name": [
+              "Canon - PowerShot A2300 16.0-Megapixel Digital Camera - Black"
+            ],
+            "shortDescription": [
+              "5x optical/4x digital zoom2.7\" LCD screenHD movie modeDigital image stabilization"
+            ]
+          }
+        }
+      ]
+    }
+  }
+]

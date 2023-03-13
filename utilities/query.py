@@ -50,6 +50,7 @@ def create_prior_queries(doc_ids, doc_id_weights,
 
 # Hardcoded query here.  Better to use search templates or other query config.
 def create_query(user_query, click_prior_query, filters, sort="_score", sortDir="desc", size=10, source=None):
+    name_field = "name.synonyms" if args.synonyms else "name"
     query_obj = {
         'size': size,
         "sort": [
@@ -65,7 +66,7 @@ def create_query(user_query, click_prior_query, filters, sort="_score", sortDir=
                         "should": [  #
                             {
                                 "match": {
-                                    "name": {
+                                    name_field: {
                                         "query": user_query,
                                         "fuzziness": "1",
                                         "prefix_length": 2,
@@ -89,7 +90,7 @@ def create_query(user_query, click_prior_query, filters, sort="_score", sortDir=
                                     "type": "phrase",
                                     "slop": "6",
                                     "minimum_should_match": "2<75%",
-                                    "fields": ["name^10", "name.hyphens^10", "shortDescription^5",
+                                    "fields": [f"{name_field}^10", "name.hyphens^10", "shortDescription^5",
                                                "longDescription^5", "department^0.5", "sku", "manufacturer", "features",
                                                "categoryPath"]
                                 }
@@ -206,13 +207,14 @@ if __name__ == "__main__":
     general = parser.add_argument_group("general")
     general.add_argument("-i", '--index', default="bbuy_products",
                          help='The name of the main index to search')
-    general.add_argument("-s", '--host', default="localhost",
+    general.add_argument('--host', default="localhost",
                          help='The OpenSearch host name')
+    general.add_argument("--synonyms",
+                         help='If set, queries will match against synonyms of product names', action="store_true", default=False)
     general.add_argument("-p", '--port', type=int, default=9200,
                          help='The OpenSearch port')
     general.add_argument('--user',
                          help='The OpenSearch admin.  If this is set, the program will prompt for password too. If not set, use default of admin/admin')
-
     args = parser.parse_args()
 
     if len(vars(args)) == 0:
@@ -233,13 +235,9 @@ if __name__ == "__main__":
     )
     index_name = args.index
     query_prompt = "\nEnter your query (type 'Exit' to exit or hit ctrl-c):"
-    print(query_prompt)
-    for line in fileinput.input():
+    while True:
+        line =input(query_prompt).rstrip()
         query = line.rstrip()
-        if query == "Exit":
-            break
+        if query.lower() == "exit":
+            exit(0)
         search(client=opensearch, user_query=query, index=index_name)
-
-        print(query_prompt)
-
-    
