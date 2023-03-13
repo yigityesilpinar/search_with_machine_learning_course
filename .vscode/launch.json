@@ -5,6 +5,54 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "#W2 - Query synonyms",
+      "type": "python",
+      "request": "launch",
+      "program": "utilities/query.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": []
+    },
+    {
+      "name": "#W2 - Generate synonyms",
+      "type": "python",
+      "request": "launch",
+      "program": "week2/createContentTrainingData.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--label",
+        "name",
+        "--transform",
+        "--output",
+        "datasets/fasttext/products.txt"
+      ]
+    },
+    {
+      "name": "#W2 - Create Content Training Data",
+      "type": "python",
+      "request": "launch",
+      "program": "week2/createContentTrainingData.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "--label",
+        "id",
+        "--min_products",
+        "500",
+        "--output",
+        "datasets/fasttext/labeled_products.txt"
+      ]
+    },
+    {
+      "name": "Current file",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "1) Create ltr store",
       "type": "python",
       "request": "launch",
