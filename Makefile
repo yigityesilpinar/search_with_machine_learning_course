@@ -142,3 +142,43 @@ predict_reviews:
 
 .PHONY: run_reviews
 run_reviews: generate_reviews_data shuffle_reviews_data normalize_reviews_data split_reviews_data train_reviews test_reviews_model
+
+.PHONY: explore_categories
+explore_categories:
+	python3 week3/leavesToPaths.py --max_depth 3 
+
+.PHONY: prune_category_taxonomy
+prune_category_taxonomy:
+	python3 week3/create_labeled_queries.py --min_queries 10000
+
+.PHONY: shuffle_labeled_queries
+shuffle_labeled_queries: 
+	bash -c "shuf datasets/fasttext/labeled_queries.txt  --random-source=<(seq 1999999) > datasets/fasttext/shuffled_labeled_queries.txt"
+
+
+.PHONY: split_labeled_queries
+split_labeled_queries: 
+	head -50000 `pwd`/datasets/fasttext/shuffled_labeled_queries.txt > `pwd`/datasets/fasttext/labeled_queries_training_data.txt && \
+	tail -10000 `pwd`/datasets/fasttext/shuffled_labeled_queries.txt > `pwd`/datasets/fasttext/labeled_queries_test_data.txt
+	wc `pwd`/datasets/fasttext/labeled_queries_training_data.txt
+	wc `pwd`/datasets/fasttext/labeled_queries_test_data.txt
+
+
+.PHONY: train_labeled_queries
+train_labeled_queries: 
+	fasttext supervised -input `pwd`/datasets/fasttext/labeled_queries_training_data.txt -output `pwd`/datasets/fasttext/labeled_queries_model -lr 0.5 -epoch 25 -wordNgrams 2
+
+
+.PHONY: test_labeled_queries
+test_labeled_queries: 
+	fasttext test `pwd`/datasets/fasttext/labeled_queries_model.bin `pwd`/datasets/fasttext/labeled_queries_test_data.txt 1
+	fasttext test `pwd`/datasets/fasttext/labeled_queries_model.bin `pwd`/datasets/fasttext/labeled_queries_test_data.txt 3
+	fasttext test `pwd`/datasets/fasttext/labeled_queries_model.bin `pwd`/datasets/fasttext/labeled_queries_test_data.txt 5
+
+.PHONY: predict_query_classification 
+predict_query_classification: 
+	fasttext predict `pwd`/datasets/fasttext/labeled_queries_model.bin -
+
+.PHONY: run_query_classification 
+run_query_classification: prune_category_taxonomy shuffle_labeled_queries split_labeled_queries train_labeled_queries test_labeled_queries
+
