@@ -1,15 +1,11 @@
-import os
 import argparse
 import xml.etree.ElementTree as ET
 import pandas as pd
-import numpy as np
 import csv
-from nltk import regexp_tokenize
-from nltk.stem import PorterStemmer
-import re
 from tqdm import tqdm
 import time
 import dask.dataframe as dd
+from transform_query import transform_query
 
 tqdm.pandas()
 categories_file_name = r"datasets/product_data/categories/categories_0001_abcat0010000_to_pcmcat99300050000.xml"
@@ -40,18 +36,6 @@ max_rows = None
 if args.max_rows:
     max_rows = int(args.max_rows)
 
-
-stemmer = PorterStemmer()
-
-def transform_query(query):
-    query_without_special_chars = re.sub("[^0-9a-zA-Z]+", " ", query.lower())
-    query_with_normalized_spaces = " ".join(query_without_special_chars.split())
-    tokens = regexp_tokenize(query_with_normalized_spaces, pattern="\s+", gaps=True)
-    stemmed_tokens = [stemmer.stem(token) for token in tokens]
-    transformed_product_name = " ".join(stemmed_tokens)
-    if not transformed_product_name:
-        return None
-    return transformed_product_name
 
 
 # The root category, named Best Buy with id cat00000, doesn't have a parent.

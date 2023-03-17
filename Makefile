@@ -179,6 +179,9 @@ test_labeled_queries:
 predict_query_classification: 
 	fasttext predict `pwd`/datasets/fasttext/labeled_queries_model.bin -
 
+.PHONY: count_unique_categories
+count_unique_categories:
+	cut -d' ' -f1 datasets/fasttext/labeled_queries.txt | sort | uniq | wc
+
 .PHONY: run_query_classification 
 run_query_classification: prune_category_taxonomy shuffle_labeled_queries split_labeled_queries train_labeled_queries test_labeled_queries
-
