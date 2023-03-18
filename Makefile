@@ -185,3 +185,11 @@ count_unique_categories:
 
 .PHONY: run_query_classification 
 run_query_classification: prune_category_taxonomy shuffle_labeled_queries split_labeled_queries train_labeled_queries test_labeled_queries
+
+.PHONY: generate_query_product_name
+generate_query_product_name: 
+	python3 week3/generate_query_product_name.py
+
+.PHONY: query_similarity
+query_similarity: 
+	python3 week3/query_similarity.py
