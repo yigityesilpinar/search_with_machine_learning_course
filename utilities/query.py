@@ -11,6 +11,9 @@ import pandas as pd
 import logging
 from fasttext.FastText import _FastText
 from typing import Callable
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -46,6 +49,19 @@ def create_prior_queries(doc_ids, doc_id_weights,
                 pass  # nothing to do in this case, it just means we can't find priors for this doc
     return click_prior_query
 
+
+def create_vector_query(user_query, filters, size=10):
+    query_vector = model.encode([user_query])[0]
+    query_obj = {
+        "size": size,
+        "query": {
+            "bool": {
+                "must": {"knn": {"embedding": {"vector": query_vector, "k": size}}},
+                "filter": filters,
+            }
+        },
+    }
+    return query_obj
 
 # Hardcoded query here.  Better to use search templates or other query config.
 def create_query(user_query, click_prior_query, filters, sort="_score", sortDir="desc", size=10, source=None, use_synoyms=False):
@@ -193,7 +209,7 @@ class QueryClassification:
         self.transform_query = transform_query
         self.prediction_count = prediction_count
 
-def search(client, user_query, index="bbuy_products", sort="_score", sortDir="desc", source=None, use_synonyms=False, print_results=False, print_query=False, query_classification:QueryClassification=None, boost_mode=False, category_path_ids_boost=0.001, category_leaf_boost = 0.002):
+def search(client, user_query, index="bbuy_products", sort="_score", sortDir="desc", source=None, use_synonyms=False, print_results=False, print_query=False, query_classification:QueryClassification=None, boost_mode=False, category_path_ids_boost=0.001, category_leaf_boost = 0.002, vector_search=False, size=10):
     #### W3: classify the query
     #### W3: create filters and boosts
     # Note: you may also want to modify the `create_query` method above
@@ -237,7 +253,10 @@ def search(client, user_query, index="bbuy_products", sort="_score", sortDir="de
                 }
             }
         ]
-    query_obj = create_query(user_query, click_prior_query=None, filters=filters, sort=sort, sortDir=sortDir, source=source, use_synoyms=use_synonyms)
+    if vector_search:
+        query_obj = create_vector_query(user_query, size=size, filters=filters)
+    else:
+        query_obj = create_query(user_query, click_prior_query=None, filters=filters, sort=sort, sortDir=sortDir, source=source, use_synoyms=use_synonyms, size=size)
 
     if categories_over_threshold and boost_mode:
         query_obj["query"]["function_score"]["query"]["bool"]["should"].extend(
@@ -271,6 +290,8 @@ if __name__ == "__main__":
                          help='If set, query classification will be used in search', action="store_true", default=False)
     general.add_argument("--boost",
                         help='If set, query classification will be in boost mode instead of filter', action="store_true", default=False)
+    general.add_argument("--vector",
+                        help='If set, use vector search', action="store_true", default=False)
     general.add_argument("-p", '--port', type=int, default=9200,
                          help='The OpenSearch port')
     general.add_argument('--user',
@@ -333,4 +354,5 @@ if __name__ == "__main__":
             print_results=True,
             query_classification=query_classification,
             boost_mode=args.boost,
+            vector_search=args.vector
         )
