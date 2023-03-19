@@ -5,6 +5,29 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "#W3 - Query with classification",
+      "type": "python",
+      "request": "launch",
+      "program": "utilities/query.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": ["--classification"]
+    },
+    {
+      "name": "#W3 - Generate labeled queries",
+      "type": "python",
+      "request": "launch",
+      "program": "week3/create_labeled_queries.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        // "--max_rows",
+        // "50000",
+        "--min_queries",
+        "1000"
+      ]
+    },
+    {
       "name": "#W2 - Query synonyms",
       "type": "python",
       "request": "launch",
