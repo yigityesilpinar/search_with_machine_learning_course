@@ -5,13 +5,12 @@ import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 import argparse
 import json
-import os
 from getpass import getpass
 from urllib.parse import urljoin
 import pandas as pd
-import fileinput
 import logging
-
+from fasttext.FastText import _FastText
+from typing import Callable
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -49,8 +48,8 @@ def create_prior_queries(doc_ids, doc_id_weights,
 
 
 # Hardcoded query here.  Better to use search templates or other query config.
-def create_query(user_query, click_prior_query, filters, sort="_score", sortDir="desc", size=10, source=None):
-    name_field = "name.synonyms" if args.synonyms else "name"
+def create_query(user_query, click_prior_query, filters, sort="_score", sortDir="desc", size=10, source=None, use_synoyms=False):
+    name_field = "name.synonyms" if use_synoyms else "name"
     query_obj = {
         'size': size,
         "sort": [
@@ -186,17 +185,74 @@ def create_query(user_query, click_prior_query, filters, sort="_score", sortDir=
         query_obj["_source"] = source
     return query_obj
 
+class QueryClassification:
+    def __init__(self, model: _FastText, threshold: int, label_prefix: str, transform_query: Callable[..., str], prediction_count:int):
+        self.model = model 
+        self.threshold = threshold
+        self.label_prefix = label_prefix
+        self.transform_query = transform_query
+        self.prediction_count = prediction_count
 
-def search(client, user_query, index="bbuy_products", sort="_score", sortDir="desc"):
+def search(client, user_query, index="bbuy_products", sort="_score", sortDir="desc", source=None, use_synonyms=False, print_results=False, print_query=False, query_classification:QueryClassification=None, boost_mode=False, category_path_ids_boost=0.001, category_leaf_boost = 0.002):
     #### W3: classify the query
     #### W3: create filters and boosts
     # Note: you may also want to modify the `create_query` method above
-    query_obj = create_query(user_query, click_prior_query=None, filters=None, sort=sort, sortDir=sortDir, source=["name", "shortDescription"])
-    logging.info(query_obj)
+    all_predictions = []
+    predictions_over_threshold = []
+    if query_classification:
+        labels, scores = query_classification.model.predict(query_classification.transform_query(user_query), k=query_classification.prediction_count)
+        for idx, label_with_prefix in enumerate(labels):
+            score = scores[idx]
+            label = label_with_prefix[len(query_classification.label_prefix) :]
+            all_predictions.append({
+                "category": label,
+                "score": score
+            })
+            if score >= query_classification.threshold:
+                predictions_over_threshold.append({
+                    "category": label,
+                    "score": score
+                })
+        # nothing bigger than threshold, fallback to first n categories sum to reach the threshold
+        if not predictions_over_threshold:
+            sum_index = 0
+            sum_score = 0
+            for score in scores:
+                sum_index = sum_index + 1
+                sum_score += score
+                if sum_score >= query_classification.threshold:
+                    predictions_over_threshold = all_predictions[:sum_index]
+                    break
+                
+
+
+    filters = None
+    categories_over_threshold =[prediction["category"] for prediction in predictions_over_threshold]
+    if categories_over_threshold and not boost_mode:
+        filters = [
+            {
+                "bool": {
+                    "must": {"terms": {"categoryPathIds": categories_over_threshold }},
+                    "should": {"terms": {"categoryLeaf": categories_over_threshold}},
+                }
+            }
+        ]
+    query_obj = create_query(user_query, click_prior_query=None, filters=filters, sort=sort, sortDir=sortDir, source=source, use_synoyms=use_synonyms)
+
+    if categories_over_threshold and boost_mode:
+        query_obj["query"]["function_score"]["query"]["bool"]["should"].extend(
+            [
+                {"terms": {"categoryPathIds": categories_over_threshold, "boost": category_path_ids_boost}},
+                {"terms": {"categoryLeaf": categories_over_threshold, "boost": category_leaf_boost}},
+            ]
+        )
+    if print_query:
+        print(json.dumps(query_obj, indent=2))  
     response = client.search(query_obj, index=index)
     if response and response['hits']['hits'] and len(response['hits']['hits']) > 0:
-        hits = response['hits']['hits']
-        print(json.dumps(response, indent=2))
+        if print_results:
+            print(json.dumps(response, indent=2))
+    return response, predictions_over_threshold, all_predictions
 
 
 if __name__ == "__main__":
@@ -211,6 +267,10 @@ if __name__ == "__main__":
                          help='The OpenSearch host name')
     general.add_argument("--synonyms",
                          help='If set, queries will match against synonyms of product names', action="store_true", default=False)
+    general.add_argument("--classification",
+                         help='If set, query classification will be used in search', action="store_true", default=False)
+    general.add_argument("--boost",
+                        help='If set, query classification will be in boost mode instead of filter', action="store_true", default=False)
     general.add_argument("-p", '--port', type=int, default=9200,
                          help='The OpenSearch port')
     general.add_argument('--user',
@@ -235,9 +295,42 @@ if __name__ == "__main__":
     )
     index_name = args.index
     query_prompt = "\nEnter your query (type 'Exit' to exit or hit ctrl-c):"
+    query_classification = None
+    if args.classification:
+        import os
+        import fasttext
+        import sys
+
+        sys.path.append(os.path.abspath(os.path.join(".")))
+        from week3.transform_query import transform_query as _transform_query
+
+        query_classification_model_file_path = (
+            r"datasets/fasttext/labeled_queries_model.bin"
+        )
+        query_classification_model = fasttext.load_model(
+            query_classification_model_file_path
+        )
+        query_classification_prefix = "__label__"
+        query_classification_score_threshold = 0.5
+        query_classification = QueryClassification(
+            model=query_classification_model,
+            threshold=query_classification_score_threshold,
+            label_prefix=query_classification_prefix,
+            transform_query=_transform_query,
+            prediction_count=3,
+        )
     while True:
-        line =input(query_prompt).rstrip()
+        line = input(query_prompt).rstrip()
         query = line.rstrip()
         if query.lower() == "exit":
             exit(0)
-        search(client=opensearch, user_query=query, index=index_name)
+        search(
+            client=opensearch,
+            user_query=query,
+            index=index_name,
+            source=["name", "shortDescription"],
+            use_synonyms=args.synonyms,
+            print_results=True,
+            query_classification=query_classification,
+            boost_mode=args.boost,
+        )
