@@ -11,7 +11,7 @@ ANNOTATIONS_JSON_FILE="`pwd`/conf/bbuy_annotations.json"
 PRODUCTS_JSON_FILE="`pwd`/conf/bbuy_products.json"
 QUERIES_JSON_FILE="`pwd`/conf/bbuy_queries.json"
 DATASETS_DIR="`pwd`/datasets"
-PYTHON_LOC="`pwd`/utilities"
+PYTHON_LOC="`pwd`/week4/utilities"
 
 LOGS_DIR="`pwd`/logs"
 ANNOTATE=""

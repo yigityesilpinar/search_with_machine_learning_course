@@ -18,7 +18,7 @@ build-local-opensearch-learning-to-rank:
 
 .PHONY: index
 index:
-	./index-data.sh -r -p `pwd`/week2/conf/bbuy_products.json
+	./index-data.sh -r -p `pwd`/week4/conf/bbuy_products.json
 
 .PHONY: delete
 delete:
@@ -193,3 +193,4 @@ generate_query_product_name:
 .PHONY: query_similarity
 query_similarity: 
 	python3 week3/query_similarity.py
+
